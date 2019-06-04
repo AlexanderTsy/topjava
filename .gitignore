@@ -109,7 +109,7 @@ derby.log
 .factorypath
 
 
-.patch
+*.patch
 
 
 
