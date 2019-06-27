@@ -10,8 +10,10 @@ import ru.javawebinar.topjava.repository.UserRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Repository
@@ -41,7 +43,7 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     @Override
     public User get(int id) {
         log.info("get {}", id);
-        return null;
+        return repository.get(id);
     }
 
     @Override
@@ -53,6 +55,8 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     @Override
     public User getByEmail(String email) {
         log.info("getByEmail {}", email);
-        return null;
+        return repository.values().stream()
+                .filter(u -> email.equalsIgnoreCase(u.getEmail()))
+                .findFirst().orElse(null);
     }
 }
