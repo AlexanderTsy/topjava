@@ -19,6 +19,12 @@
 <body>
 <section>
     <h3><a href="index.html">Home</a></h3>
+    <select id="userId">
+        <option value="1" selected>User1</option>
+        <option value="2">User2</option>
+        <option value="3">User3</option>
+        <option value="4">User4</option>
+    </select>
     <hr/>
     <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
@@ -34,7 +40,7 @@
         </tr>
         </thead>
         <c:forEach items="${meals}" var="meal">
-            <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealTo"/>
+            <jsp:useBean id="meal" type="ru.javawebinar.topjava.to.MealTo"/>
             <tr class="${meal.excess ? 'excess' : 'normal'}">
                 <td>
                         <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>

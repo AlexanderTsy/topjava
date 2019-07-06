@@ -37,7 +37,7 @@ public class MealServlet extends HttpServlet {
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")),
-                Integer.parseInt(request.getParameter("userId")));
+                SecurityUtil.authUserId());
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
         repository.save(meal);
@@ -61,7 +61,7 @@ public class MealServlet extends HttpServlet {
                         new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
                                 "",
                                 1000,
-                                getUserId(request)) :
+                                SecurityUtil.authUserId()) :
                         repository.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
@@ -79,10 +79,5 @@ public class MealServlet extends HttpServlet {
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.parseInt(paramId);
-    }
-
-    private int getUserId(HttpServletRequest request) {
-        String paramUserId = Objects.requireNonNull(request.getParameter("userId"));
-        return Integer.parseInt(paramUserId);
     }
 }
