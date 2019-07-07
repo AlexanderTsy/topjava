@@ -18,8 +18,7 @@ import java.util.stream.Collectors;
 public class InMemoryMealRepositoryImpl implements MealRepository {
     private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
-    private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
-
+    private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepositoryImpl.class);
     {
         log.info("Meals list initialised.");
         MealsUtil.MEALS.forEach(this::save);
@@ -32,61 +31,27 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
             repository.put(meal.getId(), meal);
             return meal;
         }
-        else {
-            if (mealBelongsToAuthorisedUser(meal.getId())){
-                // treat case: update, but absent in storage
-                return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
-            }
-            else {
-                log.warn(java.time.LocalDateTime.now().toString()+" Unauthorised attempt to save a meal.");
-                return null;
-            }
-        }
-
+        // treat case: update, but absent in storage
+        return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
     public boolean delete(int id) {
-        if (mealBelongsToAuthorisedUser(id)) {
+        log.info("Delete {}", id);
             return repository.remove(id) != null;
-        }
-        else {
-            log.warn(java.time.LocalDateTime.now().toString()+" Unauthorised attempt to delete a meal.");
-            return false;
-        }
     }
 
     @Override
     public Meal get(int id) {
-
-        if (mealBelongsToAuthorisedUser(id))
-        {
-            return repository.get(id);
-        }
-        else {
-            log.warn(java.time.LocalDateTime.now().toString()+" Unauthorised attempt to retrieve a meal.");
-            return null;
-        }
+        log.info("get {}", id);
+        return repository.get(id);
     }
 
     @Override
     public Collection<Meal> getAll() {
-        int authorisedUserId = SecurityUtil.authUserId();
         return repository.values().stream()
-                .filter(m -> m.getUserId() == authorisedUserId)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
-    }
-
-    private boolean mealBelongsToAuthorisedUser(int mealId) {
-        Meal meal = repository.get(mealId);
-        if (meal.getUserId() == SecurityUtil.authUserId())
-        {
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 }
 

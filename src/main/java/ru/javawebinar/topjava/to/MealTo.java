@@ -1,7 +1,9 @@
 package ru.javawebinar.topjava.to;
 
-import java.time.LocalDateTime;
+import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+@Component
 public class MealTo {
     private final Integer id;
 
